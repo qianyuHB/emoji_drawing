@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>黄豆表情抽奖机</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            flex-direction: column;
+        }
+        #emoji-display {
+            font-size: 100px;
+            margin-bottom: 20px;
+        }
+        #result-text {
+            font-size: 24px;
+            margin-top: 20px;
+            color: #4CAF50;
+            display: none; /* 初始隐藏 */
+        }
+        #start-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #start-button:hover {
+            background-color: #45a049;
+        }
+        #start-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="emoji-display">🎉</div>
+    <div id="result-text">恭喜！你要画这个！</div>
+    <button id="start-button">开始抽取</button>
+
+    <script>
+        // 黄豆表情列表
+        const emojis = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭", "😤", "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🤗", "🤔", "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🙄", "😯", "😦", "😧", "😮", "😲", "🥱", "😴", "🤤", "😪", "😵", "🤐", "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠", "😈", "👿", "👹", "👺", "🤡", "💩", "👻", "💀", "☠️", "👽", "👾", "🤖", "🎃", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾"];
+
+        // 获取DOM元素
+        const emojiDisplay = document.getElementById("emoji-display");
+        const resultText = document.getElementById("result-text");
+        const startButton = document.getElementById("start-button");
+
+        // 随机抽取表情
+        function pickRandomEmoji() {
+            const randomIndex = Math.floor(Math.random() * emojis.length);
+            return emojis[randomIndex];
+        }
+
+        // 抽奖动画
+        function startLotteryAnimation(duration) {
+            let startTime = Date.now(); // 记录动画开始时间
+            let interval = 50; // 初始间隔时间（50ms，快速切换）
+            let lastUpdateTime = startTime;
+
+            const animation = () => {
+                const currentTime = Date.now();
+                const elapsedTime = currentTime - startTime;
+
+                if (elapsedTime >= duration) {
+                    // 动画结束，显示最终结果
+                    const finalEmoji = pickRandomEmoji();
+                    emojiDisplay.textContent = finalEmoji;
+                    resultText.style.display = "block"; // 显示文字提示
+                    startButton.disabled = false; // 启用按钮
+                    return;
+                }
+
+                // 动态调整间隔时间，使动画逐渐变慢
+                if (currentTime - lastUpdateTime >= interval) {
+                    emojiDisplay.textContent = pickRandomEmoji(); // 随机切换表情
+                    lastUpdateTime = currentTime;
+                    interval += 10; // 每次增加10ms，使切换速度逐渐变慢
+                }
+
+                requestAnimationFrame(animation); // 继续动画
+            };
+
+            resultText.style.display = "none"; // 隐藏文字提示
+            requestAnimationFrame(animation); // 启动动画
+        }
+
+        // 点击按钮后开始抽奖
+        startButton.addEventListener("click", () => {
+            startButton.disabled = true; // 禁用按钮，防止重复点击
+            startLotteryAnimation(5000); // 5秒动画
+        });
+    </script>
+
+</body>
+</html>
